@@ -142,3 +142,39 @@ func TestRegressionGH7(t *testing.T) {
 	}
 	t.Logf("v = '%s'", v)
 }
+
+func TestNodeStringWithScriptTag(t *testing.T){
+	scirptTag:=`<script type="text/x-template" title="searchResultsGrid">
+            <table class="aui">
+                <thead>
+                <tr class="header">
+                    <th class="search-result-title">Page Title</th>
+                    <th class="search-result-space">Space</th>
+                    <th class="search-result-date">Updated</th>
+                </tr>
+                </thead>
+            </table>
+        </script>`
+
+	doc, err := ParseHTMLString(scirptTag)
+	if !assert.NoError(t, err, "ParseHTMLString should succeed") {
+		return
+	}
+
+	nodes := xpath.NodeList(doc.Find(`.//script`))
+	if !assert.NotEmpty(t, nodes, "Xpath Find should succeed") {
+		return
+	}
+
+	v:= nodes.String()
+
+	if !assert.NotEmpty(t, v, "Literal() should return some string") {
+		return
+	}
+	if !assert.Equal(t,scirptTag,v, "String() and   var scirptTag   should equal") {
+		return
+	}
+	t.Logf("v = '%s'", v)
+}
+
+
